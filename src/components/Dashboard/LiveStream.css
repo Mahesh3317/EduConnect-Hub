@@ -1,0 +1,10 @@
+/* src/components/Dashboard/LiveStream.css */
+.live-stream-container {
+    text-align: center;
+    margin: 20px;
+    padding: 20px;
+    background: #f5f7fa;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  

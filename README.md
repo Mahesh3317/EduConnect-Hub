@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
@@ -68,3 +69,8 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+=======
+# EduConnect-Hub
+EduConnect Hub is an integrated platform for schools, offering secure sign-up, event management, notifications, live streaming, online exams, and a vast library of study materials. It enhances communication and engagement among students, parents, and staff.
+Author:- Mahesh Sharma
+>>>>>>> f0c792e9bf3d9e54543617a2db7b6b70636aeda1

@@ -1,50 +1,113 @@
-import React from 'react';
-import { useForm } from 'react-hook-form';
-import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
-import './Signup.css';
+import React, { useState } from 'react';
+import styles from './Signup.module.css';
+import backgroundImage from 'D:/Users/MaheshS/Desktop/react/singhaniaschool/src/assets/images/belinda-fewings-6wAGwpsXHE0-unsplash.jpg';
 
-const Signup = () => {
-  const { register, handleSubmit, watch, formState: { errors } } = useForm();
-  const auth = getAuth();
+const FormComponent = () => {
+  const [isSignup, setIsSignup] = useState(false);
 
-  const onSubmit = async (data) => {
-    try {
-      await createUserWithEmailAndPassword(auth, data.email, data.password);
-      alert('User signed up successfully!');
-    } catch (error) {
-      alert(error.message);
-    }
+  const handleLoginClick = () => {
+    setIsSignup(false);
   };
 
-  const password = watch('password', '');
+  const handleSignupClick = () => {
+    setIsSignup(true);
+  };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <div>
-        <label>Username</label>
-        <input {...register('username', { required: true })} />
-        {errors.username && <p>Username is required</p>}
+    <div className={styles.pageWrapper}>
+      <div className={styles.imageContainer}>
+        <img src={backgroundImage} alt="Welcome" className={styles.image} />
       </div>
-      <div>
-        <label>Email</label>
-        <input type="email" {...register('email', { required: true })} />
-        {errors.email && <p>Email is required</p>}
+
+      <div className={styles.wrapper}>
+        <div className={styles.titleText}>
+          <div className={`${styles.title} ${!isSignup ? styles.active : ''}`}>
+            {isSignup ? 'Create a new Account' : 'Welcome Buddy'}
+          </div>
+        </div>
+
+        <div className={styles.slideControls}>
+          <div
+            className={`${styles.slide} ${!isSignup ? styles.activeSlide : ''}`}
+            onClick={handleLoginClick}>
+            Login
+          </div>
+          <div
+            className={`${styles.slide} ${isSignup ? styles.activeSlide : ''}`}
+            onClick={handleSignupClick}>
+            Signup
+          </div>
+          <div
+            className={styles.sliderTab}
+            style={{ transform: isSignup ? 'translateX(100%)' : 'translateX(0%)' }}
+          />
+        </div>
+
+        <div className={styles.formContainer}>
+          <div
+            className={styles.formInner}
+            style={{ transform: isSignup ? 'translateX(-50%)' : 'translateX(0%)' }}>
+            <form className={`${styles.form} ${!isSignup ? styles.activeForm : ''}`}>
+              <div className={styles.field}>
+                <input type="text" placeholder="Email Address" required />
+              </div>
+              <div className={styles.field}>
+                <input type="password" placeholder="Password" required />
+              </div>
+              <div className={styles.passLink}>
+                <a href="#">Forgot password?</a>
+              </div>
+              <div className={styles.fieldBtn}>
+                <div className={styles.btnLayer}></div>
+                <input type="submit" value="Login" />
+              </div>
+            </form>
+
+            <form className={`${styles.form} ${isSignup ? styles.activeForm : ''}`}>
+              <div className={styles.field}>
+                <input type="text" placeholder="Name" required />
+              </div>
+              <div className={styles.field}>
+                <input type="text" placeholder="Email Address" required />
+              </div>
+              <div className={styles.field}>
+                <input type="password" placeholder="Password" required />
+              </div>
+              <div className={styles.field}>
+                <input type="password" placeholder="Confirm password" required />
+              </div>
+
+              <div className={styles.field}>
+                <label>Select Your Role:</label>
+                <div className={styles.radioGroup}>
+                  <label>
+                    <input type="radio" name="role" value="teacher" required />
+                    Teacher
+                  </label>
+                  <label>
+                    <input type="radio" name="role" value="senate_member" required />
+                    Student (Senate Member)
+                  </label>
+                  <label>
+                    <input type="radio" name="role" value="student" required />
+                    Student
+                  </label>
+                </div>
+              </div>
+
+              <div className={styles.fieldBtn}>
+                <div className={styles.btnLayer}></div>
+                <input type="submit" value="Signup" />
+              </div>
+              <div className={styles.signupLink}>
+                <a href="#">Already have an account? Login</a>
+              </div>
+            </form>
+          </div>
+        </div>
       </div>
-      <div>
-        <label>Password</label>
-        <input type="password" {...register('password', {
-          required: 'Password is required',
-          minLength: { value: 8, message: 'Password must be at least 8 characters' },
-          pattern: {
-            value: /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W)/,
-            message: 'Password must contain an uppercase letter, a number, and a special character'
-          }
-        })} />
-        {errors.password && <p>{errors.password.message}</p>}
-      </div>
-      <button type="submit">Sign Up</button>
-    </form>
+    </div>
   );
 };
 
-export default Signup;
+export default FormComponent;

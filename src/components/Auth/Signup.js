@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styles from './Signup.module.css';
-import backgroundImage from 'D:/Users/MaheshS/Desktop/react/singhaniaschool/src/assets/images/belinda-fewings-6wAGwpsXHE0-unsplash.jpg';
+import backgroundImage from '../../assets/images/cool-triangles-sharp-edges-abstract-wallpaper-preview.jpg';
 
 const FormComponent = () => {
   const [isSignup, setIsSignup] = useState(false);
@@ -14,27 +14,25 @@ const FormComponent = () => {
   };
 
   return (
-    <div className={styles.pageWrapper}>
-      <div className={styles.imageContainer}>
-        <img src={backgroundImage} alt="Welcome" className={styles.image} />
-      </div>
-
+    <div className={styles.pageWrapper} style={{ backgroundImage: `url(${backgroundImage})` }}>
       <div className={styles.wrapper}>
         <div className={styles.titleText}>
-          <div className={`${styles.title} ${!isSignup ? styles.active : ''}`}>
+          <div className={`${styles.title} ${!isSignup ? styles.activeHeading : styles.inactiveHeading}`}>
             {isSignup ? 'Create a new Account' : 'Welcome Buddy'}
           </div>
         </div>
 
         <div className={styles.slideControls}>
           <div
-            className={`${styles.slide} ${!isSignup ? styles.activeSlide : ''}`}
-            onClick={handleLoginClick}>
+            className={`${styles.slide} ${!isSignup ? styles.active : styles.inactive}`}
+            onClick={handleLoginClick}
+          >
             Login
           </div>
           <div
-            className={`${styles.slide} ${isSignup ? styles.activeSlide : ''}`}
-            onClick={handleSignupClick}>
+            className={`${styles.slide} ${isSignup ? styles.active : styles.inactive}`}
+            onClick={handleSignupClick}
+          >
             Signup
           </div>
           <div
@@ -46,7 +44,8 @@ const FormComponent = () => {
         <div className={styles.formContainer}>
           <div
             className={styles.formInner}
-            style={{ transform: isSignup ? 'translateX(-50%)' : 'translateX(0%)' }}>
+            style={{ transform: isSignup ? 'translateX(-50%)' : 'translateX(0%)' }}
+          >
             <form className={`${styles.form} ${!isSignup ? styles.activeForm : ''}`}>
               <div className={styles.field}>
                 <input type="text" placeholder="Email Address" required />
@@ -58,8 +57,17 @@ const FormComponent = () => {
                 <a href="#">Forgot password?</a>
               </div>
               <div className={styles.fieldBtn}>
-                <div className={styles.btnLayer}></div>
-                <input type="submit" value="Login" />
+                <input
+                  type="submit"
+                  value="Login"
+                  className={isSignup ? styles.loginButtonInactive : styles.loginButton}
+                />
+              </div>
+              <div className={styles.signupLink}>
+                Don't have an account?{' '}
+                <a href="#" onClick={handleSignupClick}>
+                  Signup
+                </a>
               </div>
             </form>
 
@@ -76,31 +84,35 @@ const FormComponent = () => {
               <div className={styles.field}>
                 <input type="password" placeholder="Confirm password" required />
               </div>
-
-              <div className={styles.field}>
+              <div className={styles.role}>
                 <label>Select Your Role:</label>
                 <div className={styles.radioGroup}>
                   <label>
                     <input type="radio" name="role" value="teacher" required />
-                    Teacher
+                    <span>Teacher</span>
                   </label>
                   <label>
                     <input type="radio" name="role" value="senate_member" required />
-                    Student (Senate Member)
+                    <span>Student (Senate Member)</span>
                   </label>
                   <label>
                     <input type="radio" name="role" value="student" required />
-                    Student
+                    <span>Student</span>
                   </label>
                 </div>
               </div>
-
               <div className={styles.fieldBtn}>
-                <div className={styles.btnLayer}></div>
-                <input type="submit" value="Signup" />
+                <input
+                  type="submit"
+                  value="Signup"
+                  className={isSignup ? styles.signupButton : styles.signupButtonInactive}
+                />
               </div>
               <div className={styles.signupLink}>
-                <a href="#">Already have an account? Login</a>
+                Already have an account?{' '}
+                <a href="#" onClick={handleLoginClick}>
+                  Login
+                </a>
               </div>
             </form>
           </div>

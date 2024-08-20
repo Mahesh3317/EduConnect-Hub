@@ -1,4 +1,3 @@
-// src/components/Home/HomePage.js
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Calendar from 'react-calendar';

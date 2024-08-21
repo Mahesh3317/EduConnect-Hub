@@ -1,16 +1,47 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { auth } from '../../firebaseConfig'; // Import Firebase Auth
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'; // Import needed functions
 import styles from './Signup.module.css';
 import backgroundImage from '../../assets/images/cool-triangles-sharp-edges-abstract-wallpaper-preview.jpg';
 
 const FormComponent = () => {
   const [isSignup, setIsSignup] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(''); // State for error messages
 
   const handleLoginClick = () => {
     setIsSignup(false);
+    setErrorMessage(''); // Clear errors on mode switch
   };
 
   const handleSignupClick = () => {
     setIsSignup(true);
+    setErrorMessage(''); // Clear errors on mode switch
+  };
+
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const email = form.elements['email'].value;
+    const password = form.elements['password'].value;
+    const confirmPassword = isSignup ? form.elements['confirmPassword'].value : null;
+
+    if (isSignup && password !== confirmPassword) {
+      setErrorMessage('Passwords do not match.');
+      return;
+    }
+
+    try {
+      if (isSignup) {
+        await createUserWithEmailAndPassword(auth, email, password);
+        setErrorMessage('Signup successful!');
+      } else {
+        await signInWithEmailAndPassword(auth, email, password);
+        setErrorMessage('Login successful!');
+      }
+    } catch (error) {
+      setErrorMessage(error.message);
+    }
   };
 
   return (
@@ -46,15 +77,15 @@ const FormComponent = () => {
             className={styles.formInner}
             style={{ transform: isSignup ? 'translateX(-50%)' : 'translateX(0%)' }}
           >
-            <form className={`${styles.form} ${!isSignup ? styles.activeForm : ''}`}>
+            <form className={`${styles.form} ${!isSignup ? styles.activeForm : ''}`} onSubmit={handleFormSubmit}>
               <div className={styles.field}>
-                <input type="text" placeholder="Email Address" required />
+                <input type="email" placeholder="Email Address" name="email" required />
               </div>
               <div className={styles.field}>
-                <input type="password" placeholder="Password" required />
+                <input type="password" placeholder="Password" name="password" required />
               </div>
               <div className={styles.passLink}>
-                <a href="#">Forgot password?</a>
+                <Link to="/forgot-password">Forgot password?</Link>
               </div>
               <div className={styles.fieldBtn}>
                 <input
@@ -71,18 +102,18 @@ const FormComponent = () => {
               </div>
             </form>
 
-            <form className={`${styles.form} ${isSignup ? styles.activeForm : ''}`}>
+            <form className={`${styles.form} ${isSignup ? styles.activeForm : ''}`} onSubmit={handleFormSubmit}>
               <div className={styles.field}>
-                <input type="text" placeholder="Name" required />
+                <input type="text" placeholder="Name" name="name" required />
               </div>
               <div className={styles.field}>
-                <input type="text" placeholder="Email Address" required />
+                <input type="email" placeholder="Email Address" name="email" required />
               </div>
               <div className={styles.field}>
-                <input type="password" placeholder="Password" required />
+                <input type="password" placeholder="Password" name="password" required />
               </div>
               <div className={styles.field}>
-                <input type="password" placeholder="Confirm password" required />
+                <input type="password" placeholder="Confirm password" name="confirmPassword" required />
               </div>
               <div className={styles.role}>
                 <label>Select Your Role:</label>
@@ -117,6 +148,8 @@ const FormComponent = () => {
             </form>
           </div>
         </div>
+
+        {errorMessage && <div className={styles.error}>{errorMessage}</div>} {/* Display error or success messages */}
       </div>
     </div>
   );

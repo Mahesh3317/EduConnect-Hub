@@ -228,3 +228,9 @@
 .radioGroup span {
   font-size: var(--font-size);
 }
+.error {
+  margin-top: 10px;
+  color: red;
+  font-size: 14px;
+  text-align: center;
+}

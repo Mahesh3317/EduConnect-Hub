@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { auth } from '../../firebaseConfig'; // Import Firebase Auth
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'; // Import needed functions
+import { doc, getDoc } from 'firebase/firestore'; // Import Firestore methods
+import { db } from '../../firebaseConfig'; // Assuming you have Firebase Firestore set up
 import styles from './Signup.module.css';
 import backgroundImage from '../../assets/images/cool-triangles-sharp-edges-abstract-wallpaper-preview.jpg';
 
 const FormComponent = () => {
   const [isSignup, setIsSignup] = useState(false);
   const [errorMessage, setErrorMessage] = useState(''); // State for error messages
+  const navigate = useNavigate(); // Initialize navigate
 
   const handleLoginClick = () => {
     setIsSignup(false);
@@ -36,11 +40,45 @@ const FormComponent = () => {
         await createUserWithEmailAndPassword(auth, email, password);
         setErrorMessage('Signup successful!');
       } else {
-        await signInWithEmailAndPassword(auth, email, password);
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        // Fetch the user's role from Firestore
+        const role = await fetchUserRole(user.uid);
+
+        // Redirect based on role
+        if (role === 'teacher') {
+          navigate('/teacher-dashboard');
+        } else if (role === 'senate_member') {
+          navigate('/senate-dashboard');
+        } else if (role === 'student') {
+          navigate('/student-dashboard');
+        } else {
+          setErrorMessage('User role not recognized.');
+        }
+
         setErrorMessage('Login successful!');
       }
     } catch (error) {
       setErrorMessage(error.message);
+    }
+  };
+
+  // Function to fetch user role from Firestore
+  const fetchUserRole = async (userId) => {
+    try {
+      const userDoc = await getDoc(doc(db, 'users', userId)); // Assuming 'users' is your collection name
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        console.log("User role:", userData.role); // Debugging log
+        return userData.role; // Assuming 'role' is the field where the user's role is stored
+      } else {
+        console.log('No such document!');
+        return null;
+      }
+    } catch (error) {
+      console.error('Error fetching user role:', error);
+      return null;
     }
   };
 

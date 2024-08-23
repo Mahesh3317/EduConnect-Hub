@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
-import { auth } from '../../firebaseConfig'; // Import Firebase Auth
+import { auth, db } from '../../firebaseConfig'; // Import Firebase Auth and Firestore
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'; // Import needed functions
-import { doc, getDoc } from 'firebase/firestore'; // Import Firestore methods
-import { db } from '../../firebaseConfig'; // Assuming you have Firebase Firestore set up
+import { doc, getDoc, setDoc } from 'firebase/firestore'; // Import Firestore methods
 import styles from './Signup.module.css';
 import backgroundImage from '../../assets/images/cool-triangles-sharp-edges-abstract-wallpaper-preview.jpg';
 
@@ -29,6 +28,7 @@ const FormComponent = () => {
     const email = form.elements['email'].value;
     const password = form.elements['password'].value;
     const confirmPassword = isSignup ? form.elements['confirmPassword'].value : null;
+    const role = isSignup ? form.elements['role'].value : null; // Get role from the form
 
     if (isSignup && password !== confirmPassword) {
       setErrorMessage('Passwords do not match.');
@@ -37,8 +37,17 @@ const FormComponent = () => {
 
     try {
       if (isSignup) {
-        await createUserWithEmailAndPassword(auth, email, password);
-        setErrorMessage('Signup successful!');
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        // Save user data to Firestore
+        await setDoc(doc(db, 'users', user.uid), {
+          email: user.email,
+          role: role,
+        });
+
+        setErrorMessage('Signup successful! Please log in.');
+        setIsSignup(false); // Switch to login mode after successful signup
       } else {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
@@ -46,18 +55,20 @@ const FormComponent = () => {
         // Fetch the user's role from Firestore
         const role = await fetchUserRole(user.uid);
 
-        // Redirect based on role
-        if (role === 'teacher') {
-          navigate('/teacher-dashboard');
-        } else if (role === 'senate_member') {
-          navigate('/senate-dashboard');
-        } else if (role === 'student') {
-          navigate('/student-dashboard');
+        if (role) {
+          // Redirect based on role
+          if (role === 'teacher') {
+            navigate('/teacher-dashboard');
+          } else if (role === 'senate_member') {
+            navigate('/senate-dashboard');
+          } else if (role === 'student') {
+            navigate('/student-dashboard');
+          } else {
+            setErrorMessage('User role not recognized.');
+          }
         } else {
-          setErrorMessage('User role not recognized.');
+          setErrorMessage('Unable to retrieve user role.');
         }
-
-        setErrorMessage('Login successful!');
       }
     } catch (error) {
       setErrorMessage(error.message);

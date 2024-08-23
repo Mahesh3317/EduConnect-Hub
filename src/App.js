@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Signup from './components/Auth/Signup';
-import Login from './components/Auth/Login';
+// import Login from './components/Auth/Login';
 import ForgotPassword from './components/Auth/ForgotPassword';
 import TeacherDashboard from './components/Dashboard/TeacherDashboard';
 import SenateDashboard from './components/Dashboard/SenateDashboard';
@@ -23,7 +23,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/login" element={<Login />} />
+        {/* <Route path="/login" element={<Login />} /> */}
         <Route path="/signup" element={<Signup />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/live-stream" element={<LiveStream />} />

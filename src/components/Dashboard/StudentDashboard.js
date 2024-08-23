@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { db } from '../../firebaseConfig';
 import { collection, getDocs } from 'firebase/firestore';
 import EventList from '../Events/EventList';
+import RegistrationForm from '../Events/RegistrationForm';
 
 const StudentDashboard = () => {
   const [events, setEvents] = useState([]);
@@ -9,10 +10,10 @@ const StudentDashboard = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       const querySnapshot = await getDocs(collection(db, 'events'));
-      const eventsData = [];
-      querySnapshot.forEach((doc) => {
-        eventsData.push({ id: doc.id, ...doc.data() });
-      });
+      const eventsData = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
       setEvents(eventsData);
     };
 
@@ -23,6 +24,7 @@ const StudentDashboard = () => {
     <div>
       <h1>Student Dashboard</h1>
       <EventList events={events} />
+      <RegistrationForm />
     </div>
   );
 };

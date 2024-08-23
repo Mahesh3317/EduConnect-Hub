@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+// import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { db } from '../../firebaseConfig';
-import { collection, addDoc } from 'firebase/firestore';
+import { collection, addDoc, getDocs } from 'firebase/firestore';
 import EventForm from '../Events/EventForm';
+import ResponseList from '../Events/ResponseList';
 
 const TeacherDashboard = () => {
   const [events, setEvents] = useState([]);
+  const [responses, setResponses] = useState([]);
 
   const createEvent = async (event) => {
     try {
@@ -15,10 +18,24 @@ const TeacherDashboard = () => {
     }
   };
 
+  useEffect(() => {
+    const fetchResponses = async () => {
+      const querySnapshot = await getDocs(collection(db, 'responses'));
+      const responseData = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setResponses(responseData);
+    };
+
+    fetchResponses();
+  }, []);
+
   return (
     <div>
       <h1>Teacher Dashboard</h1>
       <EventForm onSubmit={createEvent} />
+      <ResponseList responses={responses} />
     </div>
   );
 };
